@@ -10,7 +10,7 @@ class AuthController extends Controller {
 
     public function login() {
 
-        if ($this->isLoggedIn()) {
+        if ($this->requireLogin()) {
             
             $this->redirect('dashboard');
         }
@@ -27,7 +27,6 @@ class AuthController extends Controller {
 
             $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
             $password = trim($_POST['password']);
-
             if (!$email || empty($password)) {
                 $data['error'] = 'Valid email and password required.';
                 return $this->view('auth/login', $data, 'auth');

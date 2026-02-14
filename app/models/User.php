@@ -29,8 +29,12 @@ class User {
     {
         $user = $this->findByEmail($email);
 
+        
+
         if (!$user) {
+            
             return false;
+            
         }
 
         // Account inactive

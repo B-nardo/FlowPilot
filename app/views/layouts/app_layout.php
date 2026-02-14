@@ -30,7 +30,7 @@ if (!isset($_SESSION['user_id'])) {
             </li>
 
             <li class="nav-item mb-2">
-                <a href="<?= BASE_URL ?>/leads" class="nav-link text-white">
+                <a href="<?= BASE_URL ?>/lead" class="nav-link text-white">
                     Leads
                 </a>
             </li>
