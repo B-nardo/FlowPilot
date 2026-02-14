@@ -1,80 +1,76 @@
 <?php
 
-class AuthController extends Controller {
-
+class AuthController extends Controller
+{
     private $userModel;
 
-    public function __construct() {
+    public function __construct()
+    {
+        // DON'T call requireLogin() here - this is the auth controller!
         $this->userModel = $this->model('User');
+        
+        // Generate CSRF if not exists
+        if (!isset($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
     }
 
-    public function login() {
-
-        if ($this->requireLogin()) {
-            
+    public function login()
+    {
+        // ✅ If already logged in, redirect to dashboard
+        if (isset($_SESSION['user_id'])) {
             $this->redirect('dashboard');
+            return;
         }
-
-        $data = [];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-            // CSRF validation
-            if (!isset($_POST['csrf_token']) || 
-                $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-                die('Invalid CSRF token');
+            
+            if (!$this->validateCsrf()) {
+                $error = "Invalid CSRF token";
+                $this->view('auth/login', ['error' => $error], 'auth');
+                return;
             }
 
-            $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
-            $password = trim($_POST['password']);
-            if (!$email || empty($password)) {
-                $data['error'] = 'Valid email and password required.';
-                return $this->view('auth/login', $data, 'auth');
-            }
+            $email = trim($_POST['email']);
+            $password = $_POST['password'];
 
-            $user = $this->userModel->login($email, $password);
+            $user = $this->userModel->findByEmail($email);
 
-            if ($user) {
-
-                session_regenerate_id(true);
-
+            if ($user && password_verify($password, $user['password_hash'])) {
+                
+                // ✅ Set session variables
                 $_SESSION['user_id'] = $user['id'];
-                $_SESSION['company_id'] = $user['company_id'];
-                $_SESSION['user_role'] = $user['role'];
                 $_SESSION['user_name'] = $user['name'];
+                $_SESSION['user_email'] = $user['email'];
+                $_SESSION['user_role'] = $user['role'];
+                $_SESSION['company_id'] = $user['company_id'];
 
-                header("Location: " . BASE_URL . "/dashboard");
-                exit;
+                // Update last login
+                $this->userModel->updateLastLogin($user['id']);
+
+                // Regenerate session ID for security
+                session_regenerate_id(true);
+                
+                // Regenerate CSRF token
+                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+
+                // ✅ Redirect to dashboard
+                $this->redirect('dashboard');
+                return;
             }
 
-            $data['error'] = "Invalid credentials or account inactive.";
+            $error = "Invalid email or password";
+            $this->view('auth/login', ['error' => $error], 'auth');
+            return;
         }
 
-        // Generate CSRF token
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-
-        $this->view('auth/login', $data, 'auth');
+        // ✅ Show login form
+        $this->view('auth/login', [], 'auth');
     }
 
-    public function logout() {
-
-        $_SESSION = [];
-
-        if (ini_get("session.use_cookies")) {
-            $params = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000,
-                $params["path"], $params["domain"],
-                $params["secure"], $params["httponly"]
-            );
-        }
-
+    public function logout()
+    {
         session_destroy();
-
-        header("Location: " . BASE_URL . "/auth/login");
-        exit;
-    }
-
-    public function index() {
-        $this->login();
+        $this->redirect('auth/login');
     }
 }

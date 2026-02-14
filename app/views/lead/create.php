@@ -47,6 +47,27 @@
                         </select>
                     </div>
 
+                    
+                        <div class="col-md-6 mb-3">
+        <label>Lead Source</label>
+        <select name="source" class="form-select">
+            <option value="">-- Select Source --</option>
+            <option value="Website">Website</option>
+            <option value="Facebook">Facebook</option>
+            <option value="LinkedIn">LinkedIn</option>
+            <option value="Google Ads">Google Ads</option>
+            <option value="Referral">Referral</option>
+            <option value="Cold Call">Cold Call</option>
+            <option value="Email Campaign">Email Campaign</option>
+            <option value="Trade Show">Trade Show</option>
+            <option value="Other">Other</option>
+        </select>
+    </div>
+                </div>
+
+                <div class="row">
+                    
+
                     <div class="col-md-6 mb-3">
                         <label>Estimated Value</label>
                         <div class="input-group">

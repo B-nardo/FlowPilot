@@ -8,7 +8,8 @@
 
     <?php if (!empty($_SESSION['success'])): ?>
         <div class="alert alert-success">
-            <?= $_SESSION['success']; unset($_SESSION['success']); ?>
+            <?= $_SESSION['success'];
+            unset($_SESSION['success']); ?>
         </div>
     <?php endif; ?>
 
@@ -36,21 +37,25 @@
                                         <?= htmlspecialchars($lead['contact_name']); ?>
                                     </p>
                                     <p class="small mb-2">
-                                        <i class="bi bi-envelope"></i> 
+                                        <i class="bi bi-envelope"></i>
                                         <?= htmlspecialchars($lead['email']); ?>
                                     </p>
                                     <p class="small mb-2">
-                                        <strong>Value:</strong> 
+                                        <strong>Value:</strong>
                                         $<?= number_format($lead['estimated_value'], 2); ?>
                                     </p>
                                     <div class="d-flex gap-1">
-                                        <a href="<?= BASE_URL; ?>/lead/edit/<?= $lead['id']; ?>" 
-                                           class="btn btn-sm btn-warning">
+                                        <a href="<?= BASE_URL; ?>/lead/show/<?= $lead['id']; ?>"
+                                            class="btn btn-sm btn-info">
+                                            View
+                                        </a>
+                                        <a href="<?= BASE_URL; ?>/lead/edit/<?= $lead['id']; ?>"
+                                            class="btn btn-sm btn-warning">
                                             Edit
                                         </a>
-                                        <a href="<?= BASE_URL; ?>/lead/delete/<?= $lead['id']; ?>" 
-                                           class="btn btn-sm btn-danger"
-                                           onclick="return confirm('Delete this lead?');">
+                                        <a href="<?= BASE_URL; ?>/lead/delete/<?= $lead['id']; ?>"
+                                            class="btn btn-sm btn-danger"
+                                            onclick="return confirm('Delete this lead?');">
                                             Delete
                                         </a>
                                     </div>

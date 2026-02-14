@@ -36,7 +36,9 @@ class Lead
             'email'            => $data['email'],
             'phone'            => $data['phone'],
             'status_id'        => $data['status_id'],
+              'source'           => $data['source'] ?? null,
             'estimated_value'  => $data['estimated_value'] ?? 0
+            
         ]);
 
         return $this->db->lastInsertId();

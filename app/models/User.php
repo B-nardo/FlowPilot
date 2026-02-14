@@ -1,7 +1,7 @@
 <?php
 
-class User {
-
+class User
+{
     private $db;
 
     public function __construct()
@@ -13,44 +13,128 @@ class User {
     public function findByEmail($email)
     {
         $stmt = $this->db->prepare("
-            SELECT u.*, c.subscription_status 
-            FROM users u
-            JOIN companies c ON u.company_id = c.id
-            WHERE u.email = :email
+            SELECT * FROM users 
+            WHERE email = :email 
+            AND status = 'active'
             LIMIT 1
         ");
 
-        $stmt->execute([':email' => $email]);
+        $stmt->execute(['email' => $email]);
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function login($email, $password)
+    public function create($data)
     {
-        $user = $this->findByEmail($email);
+        $stmt = $this->db->prepare("
+            INSERT INTO users 
+            (company_id, name, email, password_hash, role, status)
+            VALUES
+            (:company_id, :name, :email, :password_hash, :role, :status)
+        ");
 
-        
+        return $stmt->execute([
+            'company_id'    => $data['company_id'],
+            'name'          => $data['name'],
+            'email'         => $data['email'],
+            'password_hash' => $data['password_hash'],
+            'role'          => $data['role'] ?? 'staff',
+            'status'        => $data['status'] ?? 'active'
+        ]);
+    }
 
-        if (!$user) {
-            
-            return false;
-            
-        }
+    public function getAll($companyId)
+    {
+        $stmt = $this->db->prepare("
+            SELECT id, name, email, role, status, last_login, created_at
+            FROM users
+            WHERE company_id = :company_id
+            ORDER BY created_at DESC
+        ");
 
-        // Account inactive
-        if ($user['status'] !== 'active') {
-            return false;
-        }
+        $stmt->execute(['company_id' => $companyId]);
 
-        // Company suspended
-        if ($user['subscription_status'] === 'suspended') {
-            return false;
-        }
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
-        if (password_verify($password, $user['password_hash'])) {
-            return $user;
-        }
+    public function getById($id, $companyId)
+    {
+        $stmt = $this->db->prepare("
+            SELECT id, name, email, role, status, last_login, created_at
+            FROM users
+            WHERE id = :id
+            AND company_id = :company_id
+        ");
 
-        return false;
+        $stmt->execute([
+            'id'         => $id,
+            'company_id' => $companyId
+        ]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function update($id, $data, $companyId)
+    {
+        $stmt = $this->db->prepare("
+            UPDATE users SET
+                name = :name,
+                email = :email,
+                role = :role,
+                status = :status
+            WHERE id = :id
+            AND company_id = :company_id
+        ");
+
+        return $stmt->execute([
+            'id'         => $id,
+            'company_id' => $companyId,
+            'name'       => $data['name'],
+            'email'      => $data['email'],
+            'role'       => $data['role'],
+            'status'     => $data['status']
+        ]);
+    }
+
+    public function updatePassword($id, $newPasswordHash, $companyId)
+    {
+        $stmt = $this->db->prepare("
+            UPDATE users SET
+                password_hash = :password_hash
+            WHERE id = :id
+            AND company_id = :company_id
+        ");
+
+        return $stmt->execute([
+            'id'            => $id,
+            'company_id'    => $companyId,
+            'password_hash' => $newPasswordHash
+        ]);
+    }
+
+    // ✅ ADD THIS METHOD
+    public function updateLastLogin($userId)
+    {
+        $stmt = $this->db->prepare("
+            UPDATE users SET
+                last_login = NOW()
+            WHERE id = :id
+        ");
+
+        return $stmt->execute(['id' => $userId]);
+    }
+
+    public function delete($id, $companyId)
+    {
+        $stmt = $this->db->prepare("
+            DELETE FROM users
+            WHERE id = :id
+            AND company_id = :company_id
+        ");
+
+        return $stmt->execute([
+            'id'         => $id,
+            'company_id' => $companyId
+        ]);
     }
 }

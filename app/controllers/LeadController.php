@@ -5,6 +5,8 @@ class LeadController extends Controller
     private $leadModel;
     private $statusModel;
     private $logModel;
+    private $noteModel;  
+    private $taskModel;
 
     public function __construct()
     {
@@ -13,6 +15,7 @@ class LeadController extends Controller
         $this->leadModel   = $this->model('Lead');
         $this->statusModel = $this->model('LeadStatus');
         $this->logModel    = $this->model('ActivityLog');
+         $this->noteModel   = $this->model('LeadNote'); 
     }
 
     public function index()
@@ -61,7 +64,8 @@ public function create()
             'phone'            => trim($_POST['phone']),
             'status_id'        => $statusId,
             'assigned_user_id' => $this->userId(),
-            'estimated_value'  => floatval($_POST['estimated_value'] ?? 0)
+            'estimated_value'  => floatval($_POST['estimated_value'] ?? 0),
+             'source'           => trim($_POST['source'] ?? '')
         ];
 
         $leadId = $this->leadModel
@@ -177,4 +181,69 @@ public function create()
 
         $this->redirect('lead');
     }
+
+public function show($id)
+{
+    $lead = $this->leadModel->getById($id, $this->companyId());
+    
+    if (!$lead) {
+        die("Lead not found");
+    }
+    
+    // Staff can only view their own leads
+    if ($_SESSION['user_role'] === 'staff' && $lead['assigned_user_id'] != $this->userId()) {
+        die("Access denied");
+    }
+    
+    $notes = $this->noteModel->getByLead($id, $this->companyId());
+    // $tasks = $this->taskModel->getByLead($id, $this->companyId());
+    
+    // Note: Using parent's view() method here
+    $this->view('lead/show', [
+        'lead'  => $lead,
+        'notes' => $notes,
+        // 'tasks' => $tasks
+    ]);
+}
+
+public function addNote($leadId)
+{
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        $this->redirect('lead/show/' . $leadId);
+    }
+    
+    if (!$this->validateCsrf()) {
+        die("Invalid CSRF");
+    }
+    
+    $lead = $this->leadModel->getById($leadId, $this->companyId());
+    
+    if (!$lead) {
+        die("Lead not found");
+    }
+    
+    $note = trim($_POST['note']);
+    
+    if (empty($note)) {
+        die("Note cannot be empty");
+    }
+    
+    $this->noteModel->create(
+        $leadId,
+        $this->companyId(),
+        $this->userId(),
+        $note
+    );
+    
+    $this->logModel->log(
+        $this->companyId(),
+        'lead_note',
+        $leadId,
+        'added_note',
+        $this->userId()
+    );
+    
+    $this->regenerateCsrf();
+    $this->redirect('lead/show/' . $leadId);
+}
 }
