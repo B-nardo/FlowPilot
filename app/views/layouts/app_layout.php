@@ -23,7 +23,6 @@ $currentPage = explode('/', $currentPage)[0];
         :root {
             --sidebar-bg: #1e293b;
             --sidebar-hover: #334155;
-            --primary: #6366f1;
         }
 
         body {
@@ -104,7 +103,7 @@ $currentPage = explode('/', $currentPage)[0];
         }
 
         .sidebar .nav-link.active {
-            background: var(--primary);
+            background: var(--bs-primary);
             color: white;
         }
 
@@ -137,7 +136,7 @@ $currentPage = explode('/', $currentPage)[0];
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: var(--primary);
+            background: var(--bs-primary);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -169,7 +168,7 @@ $currentPage = explode('/', $currentPage)[0];
 
         /* Logout Link */
         .nav-link.logout-link {
-            color: #f87171 !important;
+            color: var(--bs-danger) !important;
         }
 
         .nav-link.logout-link:hover {
@@ -245,8 +244,8 @@ $currentPage = explode('/', $currentPage)[0];
                         <span>Leads</span>
                     </a>
 
-                    <a href="<?= BASE_URL ?>/tasks" 
-                       class="nav-link <?= $currentPage === 'tasks' ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>/task" 
+                       class="nav-link <?= $currentPage === 'task' ? 'active' : '' ?>">
                         <i class="bi bi-check2-square"></i>
                         <span>Tasks</span>
                     </a>

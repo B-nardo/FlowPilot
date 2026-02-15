@@ -2,7 +2,6 @@
 
 class LeadStatus 
 {
-
     protected $db;
 
     public function __construct()
@@ -10,6 +9,7 @@ class LeadStatus
         $database = new Database();
         $this->db = $database->connect();
     }
+
     public function getAll($companyId)
     {
         $stmt = $this->db->prepare("
@@ -19,7 +19,8 @@ class LeadStatus
         ");
 
         $stmt->execute(['company_id' => $companyId]);
-        return $stmt->fetchAll();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);  // ✅ Make sure this is FETCH_ASSOC
     }
 
     public function findById($id, $companyId)
@@ -35,6 +36,6 @@ class LeadStatus
             'company_id' => $companyId
         ]);
 
-        return $stmt->fetch();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }

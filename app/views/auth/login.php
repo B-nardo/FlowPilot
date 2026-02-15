@@ -2,10 +2,10 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-5 col-lg-4">
-                
+
                 <!-- Logo/Brand -->
                 <div class="text-center mb-4">
-                    <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 rounded-circle p-3 mb-3">
+                    <div>
                         <i class="bi bi-box-seam-fill text-primary" style="font-size: 2rem;"></i>
                     </div>
                     <h2 class="fw-bold mb-2">Welcome Back</h2>
@@ -16,7 +16,7 @@
                 <div class="card border-0 shadow-sm">
                     <div class="card-body p-4">
 
-                        <?php if(!empty($error)): ?>
+                        <?php if (!empty($error)): ?>
                             <div class="alert alert-danger d-flex align-items-center" role="alert">
                                 <i class="bi bi-exclamation-triangle-fill me-2"></i>
                                 <div><?= htmlspecialchars($error) ?></div>
@@ -34,12 +34,12 @@
                                         <i class="bi bi-envelope text-muted"></i>
                                     </span>
                                     <input type="email"
-                                           name="email"
-                                           id="email"
-                                           class="form-control border-start-0 ps-0"
-                                           placeholder="you@example.com"
-                                           required
-                                           autofocus>
+                                        name="email"
+                                        id="email"
+                                        class="form-control border-start-0 ps-0"
+                                        placeholder="you@example.com"
+                                        required
+                                        autofocus>
                                 </div>
                             </div>
 
@@ -50,11 +50,11 @@
                                         <i class="bi bi-lock text-muted"></i>
                                     </span>
                                     <input type="password"
-                                           name="password"
-                                           id="password"
-                                           class="form-control border-start-0 ps-0"
-                                           placeholder="Enter your password"
-                                           required>
+                                        name="password"
+                                        id="password"
+                                        class="form-control border-start-0 ps-0"
+                                        placeholder="Enter your password"
+                                        required>
                                 </div>
                             </div>
 
@@ -73,7 +73,7 @@
                 <!-- Footer -->
                 <div class="text-center mt-4">
                     <p class="text-muted small mb-0">
-                        Don't have an account? 
+                        Don't have an account?
                         <a href="<?= BASE_URL ?>/auth/register" class="text-decoration-none">
                             Sign up
                         </a>
@@ -86,10 +86,6 @@
 </div>
 
 <style>
-    body {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-
     .card {
         border-radius: 1rem;
     }
