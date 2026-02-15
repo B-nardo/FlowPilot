@@ -20,7 +20,7 @@ class LeadStatus
 
         $stmt->execute(['company_id' => $companyId]);
         
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);  // ✅ Make sure this is FETCH_ASSOC
+        return $stmt->fetchAll(PDO::FETCH_ASSOC); 
     }
 
     public function findById($id, $companyId)
@@ -37,5 +37,29 @@ class LeadStatus
         ]);
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+
+public function requiresReason($statusId, $companyId)
+{
+    $stmt = $this->db->prepare("
+        SELECT requires_reason 
+        FROM lead_statuses 
+        WHERE id = :id AND company_id = :company_id
+    ");
+    
+    $stmt->execute([
+        'id' => $statusId,
+        'company_id' => $companyId
+    ]);
+    
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result ? (bool)$result['requires_reason'] : false;
+}
+    
+
+    public function getActiveStatuses() {
+        $stmt = $this->db->query("SELECT * FROM lead_statuses ORDER BY position ASC");
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 }

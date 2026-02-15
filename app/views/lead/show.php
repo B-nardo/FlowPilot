@@ -122,7 +122,16 @@
                                 </div>
                             </div>
                         </div>
+                        <hr>
                     </div>
+                                                    <div>
+                                    <small class="text-muted d-block">Loss Reason</small>
+                                    <?php if ($lead['phone']): ?>
+                                            <strong class="text-muted"><?= htmlspecialchars($lead['loss_reason']); ?></strong>
+                                    <?php else: ?>
+                                        <span class="text-muted">Not provided</span>
+                                    <?php endif; ?>
+                                </div>
                 </div>
             </div>
 

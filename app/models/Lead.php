@@ -99,9 +99,9 @@ public function getAll($companyId, $userId = null)
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function update($id, $data, $companyId)
-    {
-        $stmt = $this->db->prepare("
+public function update($id, $data, $companyId)
+{
+    $stmt = $this->db->prepare("
         UPDATE leads SET
             company_name = :company_name,
             contact_name = :contact_name,
@@ -109,23 +109,25 @@ public function getAll($companyId, $userId = null)
             phone = :phone,
             status_id = :status_id,
             estimated_value = :estimated_value,
-            source = :source
+            source = :source,
+            loss_reason = :loss_reason
         WHERE id = :id
         AND company_id = :company_id
     ");
 
-        return $stmt->execute([
-            'id'               => $id,
-            'company_id'       => $companyId,
-            'company_name'     => $data['company_name'],
-            'contact_name'     => $data['contact_name'],
-            'email'            => $data['email'],
-            'phone'            => $data['phone'],
-            'status_id'        => $data['status_id'],
-            'estimated_value'  => $data['estimated_value'],
-            'source'           => $data['source'] ?? null
-        ]);
-    }
+    return $stmt->execute([
+        'id'               => $id,
+        'company_id'       => $companyId,
+        'company_name'     => $data['company_name'],
+        'contact_name'     => $data['contact_name'],
+        'email'            => $data['email'],
+        'phone'            => $data['phone'],
+        'status_id'        => $data['status_id'],
+        'estimated_value'  => $data['estimated_value'],
+        'source'           => $data['source'] ?? null,
+        'loss_reason'      => $data['loss_reason'] ?? null
+    ]);
+}
 
     /* ===========================
        DELETE

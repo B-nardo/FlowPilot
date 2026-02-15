@@ -258,7 +258,7 @@ $currentPage = explode('/', $currentPage)[0];
                 <div class="nav-section-title">Administration</div>
                 
                 <nav class="nav flex-column">
-                    <a href="<?= BASE_URL ?>/users" 
+                    <a href="<?= BASE_URL ?>/user" 
                        class="nav-link <?= $currentPage === 'users' ? 'active' : '' ?>">
                         <i class="bi bi-person-gear"></i>
                         <span>Users</span>

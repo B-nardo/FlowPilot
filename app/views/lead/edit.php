@@ -1,5 +1,5 @@
 <div class="container mt-4">
-
+    
     <!-- Page Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -92,48 +92,76 @@
                             </div>
                         </div>
 
-                        <!-- Status & Source -->
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label fw-semibold">
-                                    Status <span class="text-danger">*</span>
-                                </label>
-                                <select name="status_id" class="form-select" required>
-                                    <?php foreach ($statuses as $status): ?>
-                                        <option value="<?= $status['id']; ?>"
-                                            <?= ($lead['status_id'] == $status['id']) ? 'selected' : ''; ?>>
-                                            <?= htmlspecialchars($status['name']); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
+                        
 
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label fw-semibold">Lead Source</label>
-                                <select name="source" class="form-select">
-                                    <option value="">-- Select Source --</option>
-                                    <?php
-                                    $sources = [
-                                        'Website' => '🌐 Website',
-                                        'Facebook' => '📘 Facebook',
-                                        'LinkedIn' => '💼 LinkedIn',
-                                        'Google Ads' => '🎯 Google Ads',
-                                        'Referral' => '👥 Referral',
-                                        'Cold Call' => '📞 Cold Call',
-                                        'Email Campaign' => '📧 Email Campaign',
-                                        'Trade Show' => '🎪 Trade Show',
-                                        'Other' => '📋 Other'
-                                    ];
-                                    foreach ($sources as $value => $label):
-                                    ?>
-                                        <option value="<?= $value ?>"
-                                            <?= ($lead['source'] ?? '') === $value ? 'selected' : '' ?>>
-                                            <?= $label ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                        </div>
+<!-- Status & Source -->
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label class="form-label fw-semibold">
+            Status <span class="text-danger">*</span>
+        </label>
+        <select name="status_id" id="statusSelect" class="form-select" required>
+            <?php foreach ($statuses as $status): ?>
+                <option value="<?= $status['id']; ?>"
+                    data-requires-reason="<?= $status['requires_reason'] ?? 0; ?>"
+                    <?= ($lead['status_id'] == $status['id']) ? 'selected' : ''; ?>>
+                    <?= htmlspecialchars($status['name']); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <label class="form-label fw-semibold">Lead Source</label>
+        <select name="source" class="form-select">
+            <option value="">-- Select Source --</option>
+            <?php 
+            $sources = [
+                'Website' => '🌐 Website',
+                'Facebook' => '📘 Facebook',
+                'LinkedIn' => '💼 LinkedIn',
+                'Google Ads' => '🎯 Google Ads',
+                'Referral' => '👥 Referral',
+                'Cold Call' => '📞 Cold Call',
+                'Email Campaign' => '📧 Email Campaign',
+                'Trade Show' => '🎪 Trade Show',
+                'Other' => '📋 Other'
+            ];
+            foreach ($sources as $value => $label): 
+            ?>
+                <option value="<?= $value ?>" 
+                    <?= ($lead['source'] ?? '') === $value ? 'selected' : '' ?>>
+                    <?= $label ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+</div>
+
+<div class="row" id="lossReasonGroup">
+    <div class="col-12 mb-3">
+        <label class="form-label fw-semibold">
+            Loss Reason <span class="text-danger" id="reasonRequired" style="display: none;">*</span>
+        </label>
+        <div class="input-group">
+            <span class="input-group-text bg-light border-end-0">
+                <i class="bi bi-exclamation-triangle"></i>
+            </span>
+            <textarea 
+                name="loss_reason" 
+                id="lossReasonInput"
+                class="form-control border-start-0" 
+                rows="4"
+                placeholder="Select a negative status to provide a loss reason..."
+                disabled
+            ><?= htmlspecialchars($lead['loss_reason'] ?? ''); ?></textarea>
+        </div>
+        <small class="text-muted" id="reasonHelpText">
+            <i class="bi bi-info-circle"></i> 
+            This field becomes required when marking a lead as lost
+        </small>
+    </div>
+</div>
 
                         <!-- Estimated Value -->
                         <div class="row">
@@ -159,9 +187,9 @@
                                 Cancel
                             </a>
                             <?php if (in_array($_SESSION['user_role'], ['admin', 'manager'])): ?>
-                                <a href="<?= BASE_URL; ?>/lead/delete/<?= $lead['id']; ?>"
-                                    class="btn btn-outline-danger btn-lg ms-auto"
-                                    onclick="return confirm('Are you sure you want to delete this lead?');">
+                                <a href="<?= BASE_URL; ?>/lead/delete/<?= $lead['id']; ?>" 
+                                   class="btn btn-outline-danger btn-lg ms-auto"
+                                   onclick="return confirm('Are you sure you want to delete this lead?');">
                                     <i class="bi bi-trash"></i> Delete Lead
                                 </a>
                             <?php endif; ?>
@@ -210,17 +238,18 @@
 </div>
 
 <style>
-    .form-control:focus,
-    .form-select:focus {
-        border-color: #4f46e5;
-        box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.15);
-    }
+.form-control:focus, .form-select:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.15);
+}
 
-    .input-group-text {
-        border-right: none;
-    }
+.input-group-text {
+    border-right: none;
+}
 
-    .form-control {
-        border-left: none;
-    }
+.form-control {
+    border-left: none;
+}
 </style>
+
+<?php require APPROOT . '/views/lead/_editScript.php'; ?>
