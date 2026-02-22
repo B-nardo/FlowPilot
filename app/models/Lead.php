@@ -10,10 +10,6 @@ class Lead
         $this->db = $database->connect();
     }
 
-    /* ===========================
-       CREATE
-    ============================ */
-
     public function create($data, $companyId, $userId)
     {
         $stmt = $this->db->prepare("
@@ -44,13 +40,9 @@ class Lead
         return $this->db->lastInsertId();
     }
 
-    /* ===========================
-       READ ALL
-    ============================ */
-
-public function getAll($companyId, $userId = null)
-{
-    $sql = "
+    public function getAll($companyId, $userId = null)
+    {
+        $sql = "
         SELECT 
             l.*,
             ls.name AS status_name
@@ -59,26 +51,26 @@ public function getAll($companyId, $userId = null)
         WHERE l.company_id = :company_id
     ";
 
-    if ($userId !== null) {
-        $sql .= " AND l.assigned_user_id = :assigned_user_id";
+        if ($userId !== null) {
+            $sql .= " AND l.assigned_user_id = :assigned_user_id";
+        }
+
+        $sql .= " ORDER BY ls.position ASC, l.created_at DESC";
+
+        $stmt = $this->db->prepare($sql);
+
+        $params = [
+            'company_id' => $companyId
+        ];
+
+        if ($userId !== null) {
+            $params['assigned_user_id'] = $userId;
+        }
+
+        $stmt->execute($params);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
-    $sql .= " ORDER BY ls.position ASC, l.created_at DESC";
-
-    $stmt = $this->db->prepare($sql);
-
-    $params = [
-        'company_id' => $companyId
-    ];
-
-    if ($userId !== null) {
-        $params['assigned_user_id'] = $userId;
-    }
-
-    $stmt->execute($params);
-
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
 
 
     public function getById($id, $companyId)
@@ -99,9 +91,9 @@ public function getAll($companyId, $userId = null)
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-public function update($id, $data, $companyId)
-{
-    $stmt = $this->db->prepare("
+    public function update($id, $data, $companyId)
+    {
+        $stmt = $this->db->prepare("
         UPDATE leads SET
             company_name = :company_name,
             contact_name = :contact_name,
@@ -115,23 +107,20 @@ public function update($id, $data, $companyId)
         AND company_id = :company_id
     ");
 
-    return $stmt->execute([
-        'id'               => $id,
-        'company_id'       => $companyId,
-        'company_name'     => $data['company_name'],
-        'contact_name'     => $data['contact_name'],
-        'email'            => $data['email'],
-        'phone'            => $data['phone'],
-        'status_id'        => $data['status_id'],
-        'estimated_value'  => $data['estimated_value'],
-        'source'           => $data['source'] ?? null,
-        'loss_reason'      => $data['loss_reason'] ?? null
-    ]);
-}
+        return $stmt->execute([
+            'id'               => $id,
+            'company_id'       => $companyId,
+            'company_name'     => $data['company_name'],
+            'contact_name'     => $data['contact_name'],
+            'email'            => $data['email'],
+            'phone'            => $data['phone'],
+            'status_id'        => $data['status_id'],
+            'estimated_value'  => $data['estimated_value'],
+            'source'           => $data['source'] ?? null,
+            'loss_reason'      => $data['loss_reason'] ?? null
+        ]);
+    }
 
-    /* ===========================
-       DELETE
-    ============================ */
 
     public function delete($id, $companyId)
     {
@@ -146,10 +135,6 @@ public function update($id, $data, $companyId)
             'company_id' => $companyId
         ]);
     }
-
-    /* ===========================
-       DASHBOARD METHODS
-    ============================ */
 
     public function countByStatus($companyId, $userId = null)
     {

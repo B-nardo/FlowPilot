@@ -10,10 +10,6 @@ class Task
         $this->db = $database->connect();
     }
 
-    /* ===========================
-       CREATE
-    ============================ */
-
     public function create($data, $companyId)
     {
         $stmt = $this->db->prepare("
@@ -33,10 +29,6 @@ class Task
             'status'           => $data['status'] ?? 'pending'
         ]);
     }
-
-    /* ===========================
-       READ
-    ============================ */
 
     public function getAll($companyId, $userId = null)
     {
@@ -181,10 +173,6 @@ class Task
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /* ===========================
-       UPDATE
-    ============================ */
-
     public function update($id, $data, $companyId)
     {
         $stmt = $this->db->prepare("
@@ -238,10 +226,6 @@ class Task
             'company_id' => $companyId
         ]);
     }
-
-    /* ===========================
-       DELETE
-    ============================ */
 
     public function delete($id, $companyId)
     {

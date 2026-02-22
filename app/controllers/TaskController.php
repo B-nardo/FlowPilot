@@ -17,10 +17,6 @@ class TaskController extends Controller
         $this->logModel  = $this->model('ActivityLog');
     }
 
-    /* ===========================
-       LIST ALL TASKS
-    ============================ */
-
     public function index()
     {
         // Update overdue tasks
@@ -40,10 +36,6 @@ class TaskController extends Controller
             'stats' => $stats
         ]);
     }
-
-    /* ===========================
-       CREATE TASK
-    ============================ */
 
     public function create()
     {
@@ -112,9 +104,6 @@ class TaskController extends Controller
         ]);
     }
 
-    /* ===========================
-       EDIT TASK
-    ============================ */
 
     public function edit($id)
     {
@@ -168,9 +157,6 @@ class TaskController extends Controller
         ]);
     }
 
-    /* ===========================
-       TOGGLE COMPLETE
-    ============================ */
 
     public function toggleComplete($id)
     {
@@ -204,10 +190,6 @@ class TaskController extends Controller
         $_SESSION['success'] = "Task status updated";
         $this->redirect('task');
     }
-
-    /* ===========================
-       DELETE TASK
-    ============================ */
 
     public function delete($id)
     {

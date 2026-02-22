@@ -189,7 +189,7 @@ $currentPage = explode('/', $currentPage)[0];
             padding: 1rem 2rem;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             margin-bottom: 1.5rem;
-            display: none; /* Optional - remove if you want a top bar */
+            display: none; 
         }
 
         /* Mobile Responsive */

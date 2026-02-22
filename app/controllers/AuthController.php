@@ -6,7 +6,7 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        // DON'T call requireLogin() here - this is the auth controller!
+
         $this->userModel = $this->model('User');
         
         // Generate CSRF if not exists
@@ -17,7 +17,7 @@ class AuthController extends Controller
 
     public function login()
     {
-        // ✅ If already logged in, redirect to dashboard
+
         if (isset($_SESSION['user_id'])) {
             $this->redirect('dashboard');
             return;
@@ -54,7 +54,6 @@ class AuthController extends Controller
                 // Regenerate CSRF token
                 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
-                // ✅ Redirect to dashboard
                 $this->redirect('dashboard');
                 return;
             }
@@ -64,7 +63,6 @@ class AuthController extends Controller
             return;
         }
 
-        // ✅ Show login form
         $this->view('auth/login', [], 'auth');
     }
 

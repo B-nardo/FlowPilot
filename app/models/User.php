@@ -112,7 +112,6 @@ class User
         ]);
     }
 
-    // ✅ ADD THIS METHOD
     public function updateLastLogin($userId)
     {
         $stmt = $this->db->prepare("
